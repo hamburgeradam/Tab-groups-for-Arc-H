@@ -150,7 +150,7 @@ transition: max-height 0.75s cubic-bezier(0.4, 0, 0.2, 1);
 				background: transparent !important;
 				border: unset !important;
 				font-weight: 521 !important;
-        font-size: 16px !important;
+        font-size: 15px !important;
 				text-align: unset !important;
 				color: var(--sidebar-text-color) !important;
 				padding-left: 27px !important;
