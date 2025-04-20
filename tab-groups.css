@@ -141,7 +141,7 @@ transition: max-height 0.75s cubic-bezier(0.4, 0, 0.2, 1);
    	&>label {
        width: 100% !important;
 				max-width: 100% !important;
-				padding-top: 4px !important;
+				padding-top: 6px !important;
         margin-left:  12px !important;
 				padding-bottom: 0px !important;
         margin-top: 0px !important;
@@ -229,7 +229,7 @@ transition: max-height 0.75s cubic-bezier(0.4, 0, 0.2, 1);
     & tab {
       /* Target state for tabs within collapsed group */
       transform: translateY(-40px) !important;
-      z-index: -100000 !important;
+      z-index: 100000 !important;
       display: flex !important;
       opacity: 0 !important;
       
