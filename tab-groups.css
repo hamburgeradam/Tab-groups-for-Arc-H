@@ -132,7 +132,7 @@ tab-group:not([split-view-group]) {
   border-radius: calc(var(--border-radius-medium) + 2px) !important;
   
   margin: 2px 2px 2px 2px !important; /* Default open margins */
-  max-height: 160vh !important; /* Default open max-height */
+  max-height: 180vh !important; /* Default open max-height */
 
   & .tab-group-label-container {
     flex: 0 0 auto !important;
@@ -166,7 +166,7 @@ tab-group:not([split-view-group]) {
    	&>label {
 				max-width: 100% !important;
 				padding-top: 6px !important;
-        margin-left:  16px !important;
+        margin-left:  12px !important;
 				padding-bottom: 0px !important;
         margin-top: 0px !important;
      
@@ -188,7 +188,7 @@ tab-group:not([split-view-group]) {
 				content: "" !important;
 				position: absolute !important;
         margin-left: 1px !important;
-				left: 5px !important;
+				left: 3px !important;
         scale:  1.3!important;
 				margin-top: 1.5px !important;
         top: 1% !important;
@@ -284,7 +284,7 @@ tab-group:not([split-view-group]) {
     & .tab-group-label-container > label::before {
       content: "" !important;
       position: absolute !important;
-      left: 3px !important;
+      left: 1px !important;
       margin-top: 2px !important;
       top: 0% !important;
       width: 0px !important;
