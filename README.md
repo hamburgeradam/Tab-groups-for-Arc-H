@@ -1,3 +1,6 @@
+
+<p align="center"> ⚒️ TEMPORARY NOTICE! : updated the animation for opening and closing</p>
+
 <p align="center">
     <h1 align="center"> Tab Groups for Arc-H 🏞️</h2>
 </p>
