@@ -79,186 +79,174 @@ tab-group[style="--tab-group-color: var(--tab-group-color-yellow); --tab-group-c
 
 
 
+/* Combined CSS - Adding transition to existing icon property changes */
 
+/* --- Global Animation Variables --- */
+:root {
+  /* Using your provided, very long/specific durations/easings */
+  --transition-duration: 4s;
+  --tab-translate-distance: 45px;
+  --group-expand-duration: var(--transition-duration);
+  --group-collapse-duration: 0.1s;
+  --tab-expand-duration: var(--transition-duration);
+  --tab-collapse-duration: 5.32s;
+  --tab-opacity-duration: calc(var(--transition-duration) * 0.7);
+  --group-expand-easing: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --group-collapse-easing: cubic-bezier(0.055, 0.006, 0.0068, 0.0019); /* Adjusted extreme bezier values slightly */
+  --tab-expand-easing: var(--group-expand-easing);
+  --tab-collapse-easing: var(--group-collapse-easing);
+  --group-max-height-open: 150vh;
+  --group-max-height-closed: 38px;
 
-
-
-
-
-
-
-#alltabs-button {
-  display: block !important;
+  /* Added: Icon transition timing */
+  --icon-transition-duration: 0s; /* A shorter duration for the icon change */
+  --icon-transition-easing: cubic-bezier(0, 0, 0, 0.1); /* Standard smooth easing */
 }
 
+/* --- All Tabs Button --- */
+#alltabs-button { display: block !important; }
+
+/* --- Hide Empty Groups --- */
 tab-group:not(:has(tab:not([hidden]))) {
   display: none !important;
-  @media not (-moz-bool-pref: "zen.view.sidebar-expanded") {
-    width: 42px !important;
-  }
+  @media not (-moz-bool-pref: "zen.view.sidebar-expanded") { width: 42px !important; }
 }
 
+/* --- Tab Group Styling --- */
 tab-group:not([split-view-group]) {
-  display: flex !important;
-transition: max-height 0.75s cubic-bezier(0.4, 0, 0.2, 1);
-  flex-direction: column !important;
-  overflow: hidden !important;
-   
-  {
-    }
-
+  display: flex !important; flex-direction: column !important;
+  overflow: hidden !important; /* Keep this if tabs should be clipped */
   border-radius: calc(var(--border-radius-medium) + 2px) !important;
+  margin: 2px 2px 0px 2px !important;
 
-  margin: 2px 2px 0px 2px !important; /* Default open margins */
-  max-height: 180vh !important; /* Default open max-height */
+  /* --- Group Animation (Container - Expand) --- */
+  max-height: var(--group-max-height-open) !important;
+  transition:
+    max-height var(--group-expand-duration) var(--group-expand-easing),
+    margin var(--group-expand-duration) ease !important;
+  will-change: max-height;
 
+  /* --- Label Container (Alpha 1 Style) --- */
   & .tab-group-label-container {
-    flex: 0 0 auto !important;
-    position: sticky !important;
-    top: 0 !important;
+    flex: 0 0 auto !important; position: sticky !important; top: 0 !important; z-index: 1000 !important;
+    padding: 0px !important; --tab-group-color-pale: transparent !important; --tab-group-color: transparent !important;
+    margin: 0 !important; height: var(--group-max-height-closed) !important;
+    margin-bottom: 2px !important; border-radius: calc(var(--border-radius-medium) + 2px) !important;
+    transition: background-color 0.2s ease !important;
+    &:hover { background-color: var(--tab-hover-background-color) !important; }
+    &:after { display: none !important; }
+    &>label {
+       width: 100% !important; max-width: 100% !important; padding-top: 6px !important;
+       margin-left: 9px !important; padding-bottom: 0px !important; margin-top: 1.5px !important;
+       padding-inline: 0em !important; background: transparent !important; border: unset !important;
+       font-weight: 500 !important; font-size: 15px !important; text-align: unset !important;
+       color: var(--sidebar-text-color) !important; padding-left: 27px !important;
+       @media not (-moz-bool-pref: "zen.view.sidebar-expanded") { color: transparent !important; }
+     }
 
-    z-index: 1000 !important;
-    padding: 0px !important;
-    --tab-group-color-pale: transparent !important;
-    --tab-group-color: transparent !important;
-    margin: 0 !important;
+     /* --- Label Icon Base Styling --- */
+     &>label::before {
+       content: var(--folder-icon-open) !important; /* Default state */
+       position: absolute !important;
+       margin-left: 0px !important;
+       left: 2.5px !important;
+       scale: 1.4 !important; /* Default scale */
+       margin-top: 1.5px !important; /* Default margin-top */
+       top: 1% !important;
 
-    height: 38px !important;
-		margin-top: 0px !important;
-		margin-bottom: 2px !important;
-    border-radius: calc(var(--border-radius-medium) + 2px) !important;
+       /* !!! ADDED TRANSITION FOR ICON SCALE/MARGIN !!! */
+       transition:
+         scale var(--icon-transition-duration) var(--icon-transition-easing),
+         margin-top var(--icon-transition-duration) var(--icon-transition-easing);
+         /* Add 'content' transition ONLY if using delayed swap technique, which is unreliable */
+         /* content 0s linear calc(var(--icon-transition-duration) / 2); */
+       will-change: scale, margin-top; /* Performance hint */
+     }
+  } /* End Label Container */
 
-    &:hover {
-      background-color: var(--tab-hover-background-color) !important;
-    }
 
-    &:after {
-      display: none;
-      padding: 0px !important;
-     
-    }
-
-   	&>label {
-       width: 100% !important;
-				max-width: 100% !important;
-				padding-top: 6px !important;
-        margin-left:  12px !important;
-				padding-bottom: 0px !important;
-        margin-top: 0px !important;
-
-				padding-inline: 0em !important;
-				background: transparent !important;
-				border: unset !important;
-				font-weight: 521 !important;
-        font-size: 15px !important;
-				text-align: unset !important;
-				color: var(--sidebar-text-color) !important;
-				padding-left: 27px !important;
-
-				@media not (-moz-bool-pref: "zen.view.sidebar-expanded") {
-					color: transparent !important;
-				}
-			}
-
-			&>label::before {
-				content: "" !important;
-				position: absolute !important;
-        margin-left: 1px !important;
-				left: 2px !important;
-        scale:  1.3!important;
-				margin-top: 1px !important;
-        top: 1% !important;
-			  /* Default Open Icon */
-	      content: var(--folder-icon-open) !important;
-    }
-  }
-
+  /* --- Tabs within Group --- */
   & tab:not([zen-glance-tab]) {
-      margin-left: 18px !important;
-    overflow: visible !important;
-    &:active {
-      transition: scale 0.03s !important;
-      scale: 0.98;
+    /* !!! NOTE: Kept overflow:visible from your code. If tabs should slide *behind* label, this should be removed/changed */
+    margin-left: 18px !important; overflow: visible !important; position: relative;
+
+    /* --- Transition for EXPANDING --- */
+    transition:
+      transform var(--tab-expand-duration) var(--tab-expand-easing),
+      opacity var(--tab-opacity-duration) ease,
+      scale 0.03s !important;
+    will-change: transform, opacity;
+
+    /* Default State */
+    opacity: 1 !important;
+    transform: translateY(0px);
+
+    /* Active State */
+    &:active { scale: 0.98; }
+    .tab-background:active { backdrop-filter: blur(10px) !important; }
+
+    /* Vertical Line */
+    &::before {
+      content: ""; position: absolute; left: -8px; top: 50%; transform: translateY(-50%);
+      width: 2px; height: 80% !important;
+      background-color: light-dark(var(--tab-group-color), var(--tab-group-color-invert));
+      border-radius: 360px !important; z-index: 1 !important;
+      transition: opacity 0.18s ease-out !important; opacity: 1;
     }
-    /* REMOVED: Default transform state (no translation needed if not animating) */
-    /* transform: translateY(0px) !important; */
- 
+  } /* End Tab Styling */
 
-
-    .tab-background:active {
-      backdrop-filter: blur(10px)  !important;
-    }
-  }
-
-    tab::before {
-      content: "";
-      position: absolute ;
-      top: 50%;
- 
-      width: 2px;
-      height: 80% !important;
-      background-color: light-dark(
-        var(--tab-group-color),
-        var(--tab-group-color-invert)
-      );
-      border-radius: 360px !important;
-      z-index: 999 !important;
-      /* Faster line transition */
-      transition: opacity 0.18s ease-out !important;
-      opacity: 1;
-    }
-
+  /* Hide Line Conditionally */
   @media not (-moz-bool-pref: "tab.groups.display-tab-range") {
-    tab::before {
-      background: none !important;
-    }
+    tab::before { opacity: 0 !important; transition-duration: 0.1s !important; }
   }
-  
-  
 
+
+  /* ============================ */
+  /* --- Collapsed State --- */
+  /* ============================ */
   &[collapsed] {
-    /* Target state for collapsed group animation */
-    max-height: 38px !important;
+    /* Animate container closed */
+    max-height: var(--group-max-height-closed) !important;
     margin-bottom: 2px !important;
-    transition: max-height 0.3s ;
+    transition:
+      max-height var(--group-collapse-duration) var(--group-collapse-easing),
+      margin var(--group-collapse-duration) ease !important;
 
-
-    /* Hide the line instantly or fade quickly */
-  
-
-    & tab {
-      /* Target state for tabs within collapsed group */
-      transform: translateY(-40px) !important;
-      z-index: -100000 !important;
-      display: flex !important;
-      opacity: 0 !important;
-      
-    }
-    
-    
-
+    /* --- Collapsed Label Icon TARGET STATE --- */
     & .tab-group-label-container > label::before {
-      content: "" !important;
-      position: absolute !important;
-      left: 0px !important;
-      margin-top: 1.5px !important;
-      top: 0% !important;
-      width: 0px !important; /* Note: Original width was 0px, might be intended */
-      height: 8px !important;
-      scale: 1!important;
-      /* Collapsed Icon */
-      content: var(--folder-icon-closed) !important;
+      content: var(--folder-icon-closed) !important; /* Target content */
+      scale: 1.08 !important; /* Target scale */
+      /* margin-left is 0px in both states, no change needed */
+      margin-top: 2.5px !important; /* Target margin-top */
+      /* The transition defined on the base label::before rule handles the animation */
+      margin-left: -1px !important;
     }
-  }
+
+    /* --- Collapsed Tab Styling --- */
+    & tab {
+      opacity: 0 !important;
+      transform: translateY(calc(-1 * var(--tab-translate-distance))) !important;
+      pointer-events: none !important;
+      z-index: -1 !important;
+
+      /* --- Transition for COLLAPSING --- */
+      transition:
+        transform var(--tab-collapse-duration) var(--tab-collapse-easing),
+        opacity calc(var(--tab-collapse-duration) * 0.8) ease !important;
+    }
+
+    /* Collapsed Line Styling */
+    & tab::before {
+        opacity: 0 !important;
+        transition: opacity 0.1s ease-out !important;
+    }
+  } /* End Collapsed State */
+
+} /* End Tab Group */
+
+
+/* Prevent transitions during drag/drop */
+#navigator-toolbox:not([movingtab]) tab-group:not([split-view-group]) tab[style=""] {
+   transition: none !important;
 }
 
-
-
-
-  #navigator-toolbox:not([movingtab]) {
-  tab-group:not([split-view-group]) {
-  tab[style=""]  {
-   transition: transform 0.3s ease-out, opacity 0.25s ease-out !important;
-  }
-}
-}
