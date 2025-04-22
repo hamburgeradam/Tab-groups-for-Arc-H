@@ -82,7 +82,7 @@ tab-group[style="--tab-group-color: var(--tab-group-color-yellow); --tab-group-c
 /* --- Global Animation Variables --- */
 :root {
   /* GROUP Animation Timing (SLOW - for visual effect) */
-  --group-visual-duration: 4.38s; /* How long the group takes to open visually */
+  --group-visual-duration: 3s; /* How long the group takes to open visually */
   --group-visual-collapse-duration: 0.1s; /* How long the group takes to close visually */
   --group-expand-easing: cubic-bezier(0.22, 0.61, 0.36, 1);
   /* Adjusted extreme bezier - use a standard fast ease-in for collapse */
