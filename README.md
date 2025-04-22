@@ -1,6 +1,12 @@
 
 <p align="center"> ⚒️ TEMPORARY NOTICE! : updated the animation for opening and closing</p>
 
+
+
+
+
+
+
 <p align="center">
     <h1 align="center"> Tab Groups for Arc-H 🏞️</h2>
 </p>
@@ -21,5 +27,6 @@
 
 
 
-https://github.com/user-attachments/assets/b794c7c4-d308-423a-ac36-7e967ab08f6c
-
+https://github.com/user-attachments/assets/b794c7c4-d308-423a-ac36-7e967ab08f6c    
+**updated animation**
+ https://github.com/user-attachments/assets/af8917e7-feff-4aad-a61b-23d60f1ca396
