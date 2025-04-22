@@ -30,7 +30,7 @@
 https://github.com/user-attachments/assets/b794c7c4-d308-423a-ac36-7e967ab08f6c    
 
 
-**updated animation ,  you can give suggestions to improve it **
+**updated animation ,  you can give suggestions to improve it**
 
  
  https://github.com/user-attachments/assets/af8917e7-feff-4aad-a61b-23d60f1ca396
