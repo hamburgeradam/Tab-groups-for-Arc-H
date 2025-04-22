@@ -77,30 +77,30 @@ tab-group[style="--tab-group-color: var(--tab-group-color-yellow); --tab-group-c
 
 
 
-
-
-/* Combined CSS - Adding transition to existing icon property changes */
+/* Combined CSS - Decoupled Tab Motion from Group Animation */
 
 /* --- Global Animation Variables --- */
 :root {
-  /* Using your provided, very long/specific durations/easings */
-  --transition-duration: 4s;
-  --tab-translate-distance: 45px;
-  --group-expand-duration: var(--transition-duration);
-  --group-collapse-duration: 0.1s;
-  --tab-expand-duration: var(--transition-duration);
-  --tab-collapse-duration: 5.32s;
-  --tab-opacity-duration: calc(var(--transition-duration) * 0.7);
+  /* GROUP Animation Timing (SLOW - for visual effect) */
+  --group-visual-duration: 4.38s; /* How long the group takes to open visually */
+  --group-visual-collapse-duration: 0.1s; /* How long the group takes to close visually */
   --group-expand-easing: cubic-bezier(0.22, 0.61, 0.36, 1);
-  --group-collapse-easing: cubic-bezier(0.055, 0.006, 0.0068, 0.0019); /* Adjusted extreme bezier values slightly */
-  --tab-expand-easing: var(--group-expand-easing);
-  --tab-collapse-easing: var(--group-collapse-easing);
+  /* Adjusted extreme bezier - use a standard fast ease-in for collapse */
+  --group-collapse-easing:  cubic-bezier(0.055, 0.006, 0.0068, 0.0019); /* Example: EaseInQuad */
+
+  /* TAB Motion Timing (FAST - for responsiveness & drag/drop) */
+  --tab-motion-duration: 0.25s; /* <<<< FAST duration for tab transform/opacity */
+  --tab-motion-easing: ease; /* Standard easing for tab motion */
+  --tab-translate-distance: 45px; /* How far tabs slide up */
+  --tab-opacity-duration: calc(var(--tab-motion-duration) * 0.9); /* Opacity fades quickly too */
+
+  /* ICON Transition Timing (User Defined - currently instant) */
+  --icon-transition-duration: 0s;
+  --icon-transition-easing: cubic-bezier(0, 0, 0, 0.1);
+
+  /* Heights */
   --group-max-height-open: 150vh;
   --group-max-height-closed: 38px;
-
-  /* Added: Icon transition timing */
-  --icon-transition-duration: 0s; /* A shorter duration for the icon change */
-  --icon-transition-easing: cubic-bezier(0, 0, 0, 0.1); /* Standard smooth easing */
 }
 
 /* --- All Tabs Button --- */
@@ -119,14 +119,15 @@ tab-group:not([split-view-group]) {
   border-radius: calc(var(--border-radius-medium) + 2px) !important;
   margin: 2px 2px 0px 2px !important;
 
-  /* --- Group Animation (Container - Expand) --- */
+  /* --- Group Animation (Uses SLOW visual timing) --- */
   max-height: var(--group-max-height-open) !important;
   transition:
-    max-height var(--group-expand-duration) var(--group-expand-easing),
-    margin var(--group-expand-duration) ease !important;
+    /* Apply SLOW durations to the container's height/margin */
+    max-height var(--group-visual-duration) var(--group-expand-easing),
+    margin var(--group-visual-duration) ease !important;
   will-change: max-height;
 
-  /* --- Label Container (Alpha 1 Style) --- */
+  /* --- Label Container (Styling remains the same) --- */
   & .tab-group-label-container {
     flex: 0 0 auto !important; position: sticky !important; top: 0 !important; z-index: 1000 !important;
     padding: 0px !important; --tab-group-color-pale: transparent !important; --tab-group-color: transparent !important;
@@ -143,38 +144,28 @@ tab-group:not([split-view-group]) {
        color: var(--sidebar-text-color) !important; padding-left: 27px !important;
        @media not (-moz-bool-pref: "zen.view.sidebar-expanded") { color: transparent !important; }
      }
-
-     /* --- Label Icon Base Styling --- */
-     &>label::before {
-       content: var(--folder-icon-open) !important; /* Default state */
-       position: absolute !important;
-       margin-left: 0px !important;
-       left: 2.5px !important;
-       scale: 1.4 !important; /* Default scale */
-       margin-top: 1.5px !important; /* Default margin-top */
-       top: 1% !important;
-
-       /* !!! ADDED TRANSITION FOR ICON SCALE/MARGIN !!! */
-       transition:
+     &>label::before { /* Icon Base Styling */
+       content: var(--folder-icon-open) !important;
+       position: absolute !important; margin-left: 0px !important; left: 2.5px !important;
+       scale: 1.4 !important; margin-top: 1.5px !important; top: 1% !important;
+       transition: /* Icon uses its own timing */
          scale var(--icon-transition-duration) var(--icon-transition-easing),
          margin-top var(--icon-transition-duration) var(--icon-transition-easing);
-         /* Add 'content' transition ONLY if using delayed swap technique, which is unreliable */
-         /* content 0s linear calc(var(--icon-transition-duration) / 2); */
-       will-change: scale, margin-top; /* Performance hint */
+       will-change: scale, margin-top;
      }
   } /* End Label Container */
 
 
   /* --- Tabs within Group --- */
   & tab:not([zen-glance-tab]) {
-    /* !!! NOTE: Kept overflow:visible from your code. If tabs should slide *behind* label, this should be removed/changed */
     margin-left: 18px !important; overflow: visible !important; position: relative;
 
-    /* --- Transition for EXPANDING --- */
+    /* --- Tab Transition (Uses FAST motion timing) --- */
     transition:
-      transform var(--tab-expand-duration) var(--tab-expand-easing),
-      opacity var(--tab-opacity-duration) ease,
-      scale 0.03s !important;
+      /* Apply FAST duration/easing to tab transform/opacity */
+      transform var(--tab-motion-duration) var(--tab-motion-easing),
+      opacity var(--tab-opacity-duration) var(--tab-motion-easing),
+      scale 0.03s !important; /* Keep quick scale feedback */
     will-change: transform, opacity;
 
     /* Default State */
@@ -188,10 +179,8 @@ tab-group:not([split-view-group]) {
     /* Vertical Line */
     &::before {
       content: ""; position: absolute; left: -8px; top: 50%; transform: translateY(-50%);
-      width: 2px; height: 80% !important;
-      background-color: light-dark(var(--tab-group-color), var(--tab-group-color-invert));
-      border-radius: 360px !important; z-index: 1 !important;
-      transition: opacity 0.18s ease-out !important; opacity: 1;
+      width: 2px; height: 80% !important; background-color: light-dark(var(--tab-group-color), var(--tab-group-color-invert));
+      border-radius: 360px !important; z-index: 1 !important; transition: opacity 0.18s ease-out !important; opacity: 1;
     }
   } /* End Tab Styling */
 
@@ -205,20 +194,19 @@ tab-group:not([split-view-group]) {
   /* --- Collapsed State --- */
   /* ============================ */
   &[collapsed] {
-    /* Animate container closed */
+    /* Animate container closed (Uses SLOW visual timing) */
     max-height: var(--group-max-height-closed) !important;
     margin-bottom: 2px !important;
     transition:
-      max-height var(--group-collapse-duration) var(--group-collapse-easing),
-      margin var(--group-collapse-duration) ease !important;
+      /* Apply SLOW durations to the container's height/margin */
+      max-height var(--group-visual-collapse-duration) var(--group-collapse-easing),
+      margin var(--group-visual-collapse-duration) ease !important;
 
     /* --- Collapsed Label Icon TARGET STATE --- */
     & .tab-group-label-container > label::before {
-      content: var(--folder-icon-closed) !important; /* Target content */
-      scale: 1.08 !important; /* Target scale */
-      /* margin-left is 0px in both states, no change needed */
-      margin-top: 2.5px !important; /* Target margin-top */
-      /* The transition defined on the base label::before rule handles the animation */
+      content: var(--folder-icon-closed) !important;
+      scale: 1.08 !important;
+      margin-top: 2.5px !important;
       margin-left: -1px !important;
     }
 
@@ -229,10 +217,12 @@ tab-group:not([split-view-group]) {
       pointer-events: none !important;
       z-index: -1 !important;
 
-      /* --- Transition for COLLAPSING --- */
+      /* --- Tab Collapse Transition (Uses FAST motion timing) --- */
       transition:
-        transform var(--tab-collapse-duration) var(--tab-collapse-easing),
-        opacity calc(var(--tab-collapse-duration) * 0.8) ease !important;
+        /* Apply FAST duration/easing to tab transform/opacity */
+        transform var(--tab-motion-duration) var(--tab-motion-easing),
+        opacity var(--tab-opacity-duration) var(--tab-motion-easing);
+        /* NOTE: Scale transition is handled by the base tab rule */
     }
 
     /* Collapsed Line Styling */
@@ -245,8 +235,7 @@ tab-group:not([split-view-group]) {
 } /* End Tab Group */
 
 
-/* Prevent transitions during drag/drop */
+/* Prevent transitions during drag/drop - KEEP THIS */
 #navigator-toolbox:not([movingtab]) tab-group:not([split-view-group]) tab[style=""] {
    transition: none !important;
 }
-
